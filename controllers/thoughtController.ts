@@ -1,10 +1,10 @@
-import { find, findById, create, findByIdAndUpdate, findByIdAndDelete } from '../models/Thought';
-import { findByIdAndUpdate as _findByIdAndUpdate } from '../models/User';
-
+// import { find, findById, create, findByIdAndUpdate, findByIdAndDelete } from '../models/Thought.js';
+// import { findByIdAndUpdate as _findByIdAndUpdate } from '../models/User.js';
+ import Thought from "../models/Thought.js";
 
 export async function getThoughts(req, res) {
     try {
-        const thoughts = await find();
+        const thoughts = await Thought.find();
         res.json(thoughts);
     } catch (err) {
         res.status(500).json(err);
@@ -12,7 +12,7 @@ export async function getThoughts(req, res) {
 }
 export async function getThoughtById(req, res) {
     try {
-        const thought = await findById(req.params.id);
+        const thought = await Thought.findById(req.params.id);
         res.json(thought);
     } catch (err) {
         res.status(500).json(err);
@@ -20,7 +20,7 @@ export async function getThoughtById(req, res) {
 }
 export async function createThought(req, res) {
     try {
-        const thought = await create(req.body);
+        const thought = await Thought.create(req.body);
         await _findByIdAndUpdate(
             req.body.userId,
             { $push: { thoughts: thought._id } },
@@ -33,7 +33,7 @@ export async function createThought(req, res) {
 }
 export async function updateThought(req, res) {
     try {
-        const thought = await findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const thought = await Thought.findByIdAndUpdate(req.params.id, req.body, { new: true });
         res.json(thought);
     } catch (err) {
         res.status(500).json(err);
@@ -41,7 +41,7 @@ export async function updateThought(req, res) {
 }
 export async function deleteThought(req, res) {
     try {
-        await findByIdAndDelete(req.params.id);
+        await Thought.findByIdAndDelete(req.params.id);
         res.json({ message: 'Thought deleted!' });
     } catch (err) {
         res.status(500).json(err);
@@ -49,7 +49,7 @@ export async function deleteThought(req, res) {
 }
 export async function addReaction(req, res) {
     try {
-        const thought = await findByIdAndUpdate(
+        const thought = await Thought.findByIdAndUpdate(
             req.params.id,
             { $push: { reactions: req.body } },
             { new: true }
@@ -61,7 +61,7 @@ export async function addReaction(req, res) {
 }
 export async function removeReaction(req, res) {
     try {
-        const thought = await findByIdAndUpdate(
+        const thought = await Thought.findByIdAndUpdate(
             req.params.id,
             { $pull: { reactions: { reactionId: req.body.reactionId } } },
             { new: true }
@@ -71,3 +71,7 @@ export async function removeReaction(req, res) {
         res.status(500).json(err);
     }
 }
+function _findByIdAndUpdate(userId: any, arg1: { $push: { thoughts: import("mongoose").Types.ObjectId; }; }, arg2: { new: boolean; }) {
+    throw new Error("Function not implemented.");
+}
+

@@ -1,5 +1,4 @@
-const { Schema, model, Types } = require('mongoose');
-const moment = require('moment');  // Optional for timestamp formatting
+import { Schema, model, Types } from 'mongoose';
 
 const reactionSchema = new Schema(
   {
@@ -9,7 +8,7 @@ const reactionSchema = new Schema(
     createdAt: {
       type: Date,
       default: Date.now,
-      get: (timestamp) => moment(timestamp).format('MMM Do YYYY, h:mm:ss a'),
+      get: (timestamp: any) => moment(timestamp).format('MMM Do YYYY, h:mm:ss a'),
     },
   },
   { toJSON: { getters: true } }
@@ -21,7 +20,7 @@ const thoughtSchema = new Schema(
     createdAt: {
       type: Date,
       default: Date.now,
-      get: (timestamp) => moment(timestamp).format('MMM Do YYYY, h:mm:ss a'),
+      get: (timestamp: any) => moment(timestamp).format('MMM Do YYYY, h:mm:ss a'),
     },
     username: { type: String, required: true },
     reactions: [reactionSchema],
@@ -33,9 +32,15 @@ const thoughtSchema = new Schema(
 );
 
 
-thoughtSchema.virtual('reactionCount').get(function () {
+thoughtSchema
+.virtual('reactionCount')
+.get(function () {
   return this.reactions.length;
 });
 
 const Thought = model('Thought', thoughtSchema);
-module.exports = Thought;
+export default Thought;
+function moment(timestamp: any) {
+  throw new Error('Function not implemented.');
+}
+

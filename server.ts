@@ -1,5 +1,5 @@
 import express, { json } from 'express';
-import { once } from './config/connection.js';
+import once  from './config/connection.js';
 import userRoutes from './routes/userRoutes.js';
 import thoughtRoutes from './routes/thoughtRoutes.js';
 
