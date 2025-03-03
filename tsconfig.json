@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+      "outDir": "dist",
+      "module": "NodeNext",
+      "moduleResolution": "NodeNext",
+      "target": "ES2022",
+      "allowJs": true,
+      "esModuleInterop": true,
+      "forceConsistentCasingInFileNames": true,
+      "strict": true,
+      "skipLibCheck": true
+    },
+    "include": ["server.ts", "routes/**/*.ts", "controllers/**/*.ts", "models/**/*.ts"]
+  }

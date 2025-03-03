@@ -1,4 +1,5 @@
 import { Schema, model, Types } from 'mongoose';
+import moment from 'moment';
 
 const reactionSchema = new Schema(
   {
@@ -7,7 +8,7 @@ const reactionSchema = new Schema(
     username: { type: String, required: true },
     createdAt: {
       type: Date,
-      default: Date.now,
+      default: () => new Date(),
       get: (timestamp: any) => moment(timestamp).format('MMM Do YYYY, h:mm:ss a'),
     },
   },
@@ -19,7 +20,7 @@ const thoughtSchema = new Schema(
     thoughtText: { type: String, required: true, minlength: 1, maxlength: 280 },
     createdAt: {
       type: Date,
-      default: Date.now,
+      default: () => new Date(),
       get: (timestamp: any) => moment(timestamp).format('MMM Do YYYY, h:mm:ss a'),
     },
     username: { type: String, required: true },
@@ -31,16 +32,9 @@ const thoughtSchema = new Schema(
   }
 );
 
-
-thoughtSchema
-.virtual('reactionCount')
-.get(function () {
-  return this.reactions.length;
+thoughtSchema.virtual('reactionCount').get(function () {
+  return this.reactions ? this.reactions.length : 0;
 });
 
 const Thought = model('Thought', thoughtSchema);
 export default Thought;
-function moment(timestamp: any) {
-  throw new Error('Function not implemented.');
-}
-

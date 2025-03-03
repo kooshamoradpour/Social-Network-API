@@ -1,7 +1,7 @@
-// import { find, findById, create, findByIdAndUpdate, findByIdAndDelete } from '../models/User.js';
-import User from '../models/User.js';
+import { Request, Response } from 'express';
+import { User } from '../models/index.js';
 
-export async function getUsers(req, res) {
+export const getAllUsers = async (_req: Request, res: Response): Promise<void> => {
     try {
         const users = await User.find().populate('friends').populate('thoughts');
         res.json(users);
@@ -9,15 +9,16 @@ export async function getUsers(req, res) {
         res.status(500).json(err);
     }
 }
-export async function getUserById(req, res) {
+export const getUserById = async (req: Request, res: Response): Promise<void> => {
+    const { userId } = req.params;
     try {
-        const user = await User.findById(req.params.id).populate('friends').populate('thoughts');
+        const user = await User.findById(userId).populate('friends').populate('thoughts');
         res.json(user);
     } catch (err) {
         res.status(500).json(err);
     }
 }
-export async function createUser(req, res) {
+export const createUser = async (req: Request, res: Response): Promise<void> => {
     try {
         const user = await User.create(req.body);
         res.json(user);
@@ -25,7 +26,7 @@ export async function createUser(req, res) {
         res.status(500).json(err);
     }
 }
-export async function updateUser(req, res) {
+export const updateUser = async (req: Request, res: Response): Promise<void> => {
     try {
         const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
         res.json(user);
@@ -33,35 +34,42 @@ export async function updateUser(req, res) {
         res.status(500).json(err);
     }
 }
-export async function deleteUser(req, res) {
+export const deleteUser = async (req: Request, res: Response): Promise<void> => {
     try {
-        await User.findByIdAndDelete(req.params.id);
+        await User.findByIdAndDelete(req.params.userId);
         res.json({ message: 'User deleted!' });
     } catch (err) {
         res.status(500).json(err);
     }
 }
-export async function addFriend(req, res) {
+export const addFriend = async (req: Request, res: Response): Promise<void> => {
     try {
         const user = await User.findByIdAndUpdate(
-            req.params.id,
-            { $push: { friends: req.params.friendId } },
-            { new: true }
+            req.params.userId,
+            { $addToSet: { friends: req.params.friendId } }, // Use param instead of body
+            { runValidators: true, new: true }
         );
+        if (!user) {
+            res.status(404).json({ message: "User not found!" });
+        }
         res.json(user);
     } catch (err) {
         res.status(500).json(err);
     }
-}
-export async function removeFriend(req, res) {
+};
+
+export const removeFriend = async (req: Request, res: Response): Promise<void> => {
     try {
         const user = await User.findByIdAndUpdate(
-            req.params.id,
-            { $pull: { friends: req.params.friendId } },
-            { new: true }
+            req.params.userId,
+            { $pull: { friends: req.params.friendId } }, // Remove directly
+            { runValidators: true, new: true }
         );
+        if (!user) {
+            res.status(404).json({ message: "User not found!" });
+        }
         res.json(user);
     } catch (err) {
         res.status(500).json(err);
     }
-}
+};

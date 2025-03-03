@@ -1,15 +1,17 @@
-import express, { json } from 'express';
-import once  from './config/connection.js';
-import userRoutes from './routes/userRoutes.js';
-import thoughtRoutes from './routes/thoughtRoutes.js';
+import express from 'express';
+import routes from './routes/index.js';
+import db from './config/connection.js';
 
-const app = express();
+await db();
+
 const PORT = process.env.PORT || 3001;
+const app = express();
 
-app.use(json());
-app.use('/api/users', userRoutes);
-app.use('/api/thoughts', thoughtRoutes);
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-once('open', () => {
-  app.listen(PORT, () => console.log(` Server running on http://localhost:${PORT}`));
+app.use(routes);
+
+app.listen(PORT, () => {
+  console.log(`API server running on port ${PORT}!`);
 });
