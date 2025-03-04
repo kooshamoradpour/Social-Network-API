@@ -28,8 +28,15 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
 }
 export const updateUser = async (req: Request, res: Response): Promise<void> => {
     try {
-        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        res.json(user);
+        const { userId } = req.params; // ✅ Ensure correct parameter name
+
+        // ✅ Convert ID to ObjectId to avoid query failures
+        const updatedUser = await User.findByIdAndUpdate(
+            new Object(userId),
+            req.body,
+            { new: true, runValidators: true } // ✅ Return updated user & apply validation
+        );
+        res.json(updatedUser);
     } catch (err) {
         res.status(500).json(err);
     }
